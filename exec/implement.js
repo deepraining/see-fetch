@@ -92,6 +92,9 @@ module.exports = seeFetch => {
                     ]
                 }
             }
+        ],
+        implementDelay: [
+            1000
         ]
     });
 

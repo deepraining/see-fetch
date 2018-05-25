@@ -1,6 +1,6 @@
 {
   "name": "see-fetch",
-  "version": "0.0.1",
+  "version": "0.0.2-alpha",
   "description": "A window.fetch wrapper, with custom request keys, response refactoring, pre handling, post handling.",
   "homepage": "https://github.com/senntyou/see-fetch",
   "author": "senntyou",

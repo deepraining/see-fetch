@@ -1,12 +1,12 @@
 /*!
  * 
- *     see-fetch v0.0.1
+ *     see-fetch v0.0.2-alpha
  * 
  *     https://github.com/senntyou/see-fetch
  * 
  *     @senntyou <jiangjinbelief@163.com>
  * 
- *     2018-05-19 17:30:41
+ *     2018-05-25 12:03:35
  *     
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -330,6 +330,8 @@ module.exports = function (name, reqData) {
     var commonPreHandle = commonOption.preHandle && commonOption.preHandle[index];
     // implement
     var implement = option.implement && option.implement[index];
+    // implement delay
+    var implementDelay = option.implementDelay && option.implementDelay[index];
 
     // ultimate request data after requestKeys mapping
     var ultimateReqData = Object.assign({}, reqData || {});
@@ -362,7 +364,9 @@ module.exports = function (name, reqData) {
         postHandle(result, ultimateReqData, name);
 
         return new Promise(function (resolve) {
-            resolve(result);
+            if (typeof implementDelay === 'number' && implementDelay > 0) setTimeout(function (_) {
+                resolve(result);
+            }, implementDelay);else resolve(result);
         });
     } else {
         settings.method = method;

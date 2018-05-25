@@ -25,7 +25,7 @@ seeFetch(...);
 
 ```
 seeFetch.config(name, {
-    // options: method, stringify, settings, url, requestKeys, responseRefactor, preHandle, postHandle, implement
+    // options: method, stringify, settings, url, requestKeys, responseRefactor, preHandle, postHandle, implement, implementDelay
 });
 ```
 
@@ -50,7 +50,8 @@ example:
     responseRefactor: [...],
     preHandle: [...],
     postHandle: [...],
-    implement: [...]
+    implement: [...],
+    implementDelay: [...]
 }
 ```
 
@@ -170,6 +171,17 @@ implement: [
 ```
 
 * `note`: every function should return a value, like fetch response
+
+### implementDelay
+
+milliseconds delay for implement, default is `0`
+
+```
+implementDelay: [
+    1000, // 1 second delay
+    100 // 0.1 second delay
+]
+```
 
 ## api
 
