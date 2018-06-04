@@ -1,13 +1,16 @@
 {
   "name": "see-fetch",
-  "version": "0.0.1",
-  "description": "A window.fetch wrapper, with custom request keys, response refactoring, pre handling, post handling.",
+  "version": "0.0.2",
+  "description": "A window.fetch wrapper, with customizing request keys, refactoring response, pre handling, post handling, etc.",
   "homepage": "https://github.com/senntyou/see-fetch",
   "author": "senntyou",
   "keywords": [
     "window.fetch",
     "fetch",
+    "wrapper",
+    "json",
     "refactor",
+    "response",
     "handle"
   ],
   "main": "dist/see-fetch.js",
@@ -18,7 +21,7 @@
     "url": "https://github.com/senntyou/see-fetch"
   },
   "dependencies": {
-    "json-refactor": "^0.1.3"
+    "json-refactor": "^0.1.4"
   },
   "devDependencies": {
     "bootstrap": "^3.3.7",

@@ -50,6 +50,8 @@ module.exports = (name, reqData) => {
     var commonPreHandle = commonOption.preHandle && commonOption.preHandle[index];
     // implement
     var implement = option.implement && option.implement[index];
+    // implement delay
+    let implementDelay = option.implementDelay && option.implementDelay[index];
 
     // ultimate request data after requestKeys mapping
     var ultimateReqData = Object.assign({}, reqData || {});
@@ -82,7 +84,12 @@ module.exports = (name, reqData) => {
         postHandle(result, ultimateReqData, name);
 
         return new Promise((resolve) => {
-            resolve(result);
+            if (typeof implementDelay === 'number' && implementDelay > 0)
+                setTimeout(_ => {
+                    resolve(result);
+                }, implementDelay);
+            else
+                resolve(result);
         });
     }
     else {
