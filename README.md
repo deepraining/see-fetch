@@ -1,4 +1,6 @@
-# A window.fetch wrapper, with custom request keys, response refactoring, pre handling, post handling.
+# see-fetch
+
+A window.fetch wrapper, with customizing request keys, refactoring response, pre handling, post handling, etc.
 
 ## requirements
 
@@ -10,7 +12,7 @@
 
 ## note
 
-* only for `json` response
+* Only for `json` response.
 
 ## quick start
 
@@ -21,11 +23,20 @@ const seeFetch = require('see-fetch');
 seeFetch(...);
 ```
 
-### 2. config current application
+### 2. config application
 
 ```
 seeFetch.config(name, {
-    // options: method, stringify, settings, url, requestKeys, responseRefactor, preHandle, postHandle, implement, implementDelay
+    method: [...],
+    stringify: [...],
+    settings: [...],
+    url: [...],
+    requestKeys: [...],
+    responseRefactor: [...],
+    preHandle: [...],
+    postHandle: [...],
+    implement: [...],
+    implementDelay: [...]
 });
 ```
 
@@ -38,26 +49,9 @@ seeFetch(name, reqData)
 
 ## config options
 
-example:
-
-```
-{
-    method: [...],
-    stringify: [...],
-    settings: [...],
-    url: [...],
-    requestKeys: [...],
-    responseRefactor: [...],
-    preHandle: [...],
-    postHandle: [...],
-    implement: [...],
-    implementDelay: [...]
-}
-```
-
 ### method
 
-tell which http method to request, default is `GET`.
+Which http method to use, default is `GET`.
 
 ```
 method: [
@@ -70,10 +64,11 @@ method: [
 
 ### stringify
 
-whether stringify request data, default is `false`, and request will use `application/x-www-form-urlencoded`(`POST`, `PUT`, `DELETE`).
-if `true`, request will use a string in the body.
+Whether stringify request data, and put it into `body`, but not in the `header`.
 
-* note: if `GET` method, request data will always not to stringify.
+Default is `false`.
+
+* note: If `GET` method, request data will always not stringify.
 
 ```
 stringify: [
@@ -85,7 +80,7 @@ stringify: [
 
 ### settings
 
-extra fetch options
+Extra fetch options.
 
 ```
 settings: [
@@ -96,7 +91,7 @@ settings: [
 
 ### url
 
-url to request data
+Url to request.
 
 ```
 url: [
@@ -108,7 +103,7 @@ url: [
 
 ### requestKeys
 
-request keys mapping
+Request keys mapping.
 
 ```
 requestKeys: [
@@ -120,7 +115,7 @@ requestKeys: [
 
 ### responseRefactor
 
-refactor response data, after `fetch` responding
+Refactor response data, after `fetch` responding.
 
 ```
 responseRefactor: [
@@ -134,7 +129,7 @@ responseRefactor: [
 
 ### preHandle
 
-more handling after `requestKeys`, before fetch sending
+More handling after `requestKeys`, before `fetch` sending.
 
 ```
 preHandle: [
@@ -146,7 +141,7 @@ preHandle: [
 
 ### postHandle
 
-more handling after `responseRefactor`
+More handling after `responseRefactor`.
 
 ```
 postHandle: [
@@ -158,9 +153,9 @@ postHandle: [
 
 ### implement
 
-custom implement instead of `fetch`.
+Custom request implementing instead of `fetch`.
 
-sometimes, you have not to use `fetch`, but other ways, for some reasons, this is what you want.
+Sometimes, you have to not use `fetch`, instead using other ways. So, this is what you want.
 
 ```
 implement: [
@@ -170,11 +165,11 @@ implement: [
 ]
 ```
 
-* `note`: every function should return a value, like fetch response
+* `note`: Every function should return a value, like `fetch` response.
 
 ### implementDelay
 
-milliseconds delay for implement, default is `0`
+Milliseconds delay for implement, default is `0`.
 
 ```
 implementDelay: [
@@ -187,7 +182,7 @@ implementDelay: [
 
 ### config
 
-config current application
+Config application.
 
 ```
 // one
@@ -203,7 +198,7 @@ seeFetch.config({
 
 ### setEnv
 
-set current environment
+Set current environment.
 
 ```
 seeFetch.setEnv(0/1/2/3);
@@ -211,7 +206,7 @@ seeFetch.setEnv(0/1/2/3);
 
 ### getEnv
 
-get current environment
+Get current environment.
 
 ```
 var env = seeFetch.getEnv(); // 0/1/2/3
@@ -219,25 +214,25 @@ var env = seeFetch.getEnv(); // 0/1/2/3
 
 ### seeFetch
 
-make a request
+Make a request.
 
 ```
 seeFetch(name, reqData)
     .then(res => { ... });
 ```
 
-* `name`: defined request name
+* `name`: Defined request name.
     - `note`: `common` is a special request name, for this will apply to all request.
-* `reqData`: request data
+* `reqData`: Request data
     - `type`: `map`
     - `example`: `{a: 1, b: '2'}`
-* `res`: handled ultimate response json. but if response status is `3XX, 4XX, 5XX`, `res` is like this: `{error: true, response: Response}`
-    - `error`: mark response has error, and you can custom it by `seeFetch.set({errorField: 'yourErrorField'});`
-    - `response`: original [Response Object](https://developer.mozilla.org/zh-CN/docs/Web/API/Response)
+* `res`: Handled ultimate response json. But if response status is `3XX, 4XX, 5XX`, `res` will be like: `{error: true, response: Response}`
+    - `error`: Mark response having errors, and you can customize it by `seeFetch.set({errorField: 'yourErrorField'});`
+    - `response`: Original [Response Object](https://developer.mozilla.org/zh-CN/docs/Web/API/Response)
 
 ### set
 
-set custom config;
+Set custom config.
 
 ```
 seeFetch.set({
@@ -246,26 +241,26 @@ seeFetch.set({
 });
 ```
 
-* `errorField`: config your own error field, default is `error`
+* `errorField`: Config your own error field, default is `error`.
 
-* `debug`: whether in debug mode, default is `true`
+* `debug`: Whether in debug mode, default is `true`.
 
 ## handlers sequences while processing
 
-1. `method`: check which http method to request, default is `GET`.
-2. `stringify`: check whether to stringify request data.
-3. `settings`: check extra fetch options.
-4. `url`: get request url
-5. `requestKeys`:  get real request data
-6. `preHandle`: more handling before send a request
-    1. `common`: common handling, if have
-    2. `name`: named handling
-7. `implement`: if have, return a custom response data, and will not send a `fetch`
-8. `responseRefactor`: refactoring response data
-    1. `common`: common handling, if have
-    2. `name`: named handling
-9. `postHandle`: more handling after refactoring response data
-    1. `common`: common handling, if have
-    2. `name`: named handling
+1. `method`: Check which http method to use, default is `GET`.
+2. `stringify`: Check whether to stringify request data.
+3. `settings`: Check extra fetch settings.
+4. `url`: Get request url.
+5. `requestKeys`: Get real request data.
+6. `preHandle`: More handling before send a request.
+    1. `common`: Common handling, if have.
+    2. `name`: Named handling.
+7. `implement`: If have, return a custom response data, and will not send a fetch.
+8. `responseRefactor`: Refactoring response data.
+    1. `common`: Common handling, if have.
+    2. `name`: Named handling.
+9. `postHandle`: More handling after refactoring response data.
+    1. `common`: Common handling, if have.
+    2. `name`: Named handling.
 
 ## [demo code](./example)

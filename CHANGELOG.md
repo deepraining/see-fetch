@@ -1,9 +1,9 @@
-# see-fetch changelog
+# Changelog
 
 ## 0.0.2
 
-- add `implementDelay` option
+- Add `implementDelay` option.
 
 ## 0.0.1
 
-- init
+- Init.
