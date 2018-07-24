@@ -58,8 +58,10 @@ module.exports = seeFetch => {
             }
         ],
         implement: [
-            function (data) {
-                return {
+            function (cb, req) {
+                console.log('req', req);
+
+                cb({
                     "result": 1,
                     "msg": "success",
                     "data": [
@@ -90,17 +92,14 @@ module.exports = seeFetch => {
                             ]
                         }
                     ]
-                }
+                })
             }
-        ],
-        implementDelay: [
-            1000
         ]
     });
 
-    seeFetch.set({
-        debug: !1
-    });
+    // seeFetch.set({
+    //     debug: !1
+    // });
 
     seeFetch('implement', {key1: 'haha'})
         .then(res => {

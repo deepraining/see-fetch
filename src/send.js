@@ -50,8 +50,6 @@ module.exports = (name, reqData) => {
     var commonPreHandle = commonOption.preHandle && commonOption.preHandle[index];
     // implement
     var implement = option.implement && option.implement[index];
-    // implement delay
-    let implementDelay = option.implementDelay && option.implementDelay[index];
 
     // ultimate request data after requestKeys mapping
     var ultimateReqData = Object.assign({}, reqData || {});
@@ -70,26 +68,20 @@ module.exports = (name, reqData) => {
 
     // custom implement
     if (implement) {
-
-        var result = implement(!stringify ? ultimateReqData : JSON.stringify(ultimateReqData));
-
-        if (setting.debug) {
-            logger.info(`Custom implement fetch for "${name}", and request data is:`);
-            console.log(ultimateReqData);
-            logger.info(`result for "${name}" is:`);
-            console.log(result);
-        }
-
-        // post handle
-        postHandle(result, ultimateReqData, name);
-
         return new Promise((resolve) => {
-            if (typeof implementDelay === 'number' && implementDelay > 0)
-                setTimeout(_ => {
-                    resolve(result);
-                }, implementDelay);
-            else
+            implement(result => {
+                if (setting.debug) {
+                    logger.info(`Custom implement fetch for "${name}", and request data is:`);
+                    console.log(ultimateReqData);
+                    logger.info(`result for "${name}" is:`);
+                    console.log(result);
+                }
+
+                // post handle
+                postHandle(result, ultimateReqData, name);
+
                 resolve(result);
+            }, !stringify ? ultimateReqData : JSON.stringify(ultimateReqData));
         });
     }
     else {

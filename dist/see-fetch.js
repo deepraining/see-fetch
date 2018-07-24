@@ -1,12 +1,12 @@
 /*!
  * 
- *     see-fetch v0.0.2-alpha
+ *     see-fetch v0.1.0
  * 
  *     https://github.com/senntyou/see-fetch
  * 
  *     @senntyou <jiangjinbelief@163.com>
  * 
- *     2018-05-25 12:03:35
+ *     2018-07-24 17:00:18
  *     
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -330,8 +330,6 @@ module.exports = function (name, reqData) {
     var commonPreHandle = commonOption.preHandle && commonOption.preHandle[index];
     // implement
     var implement = option.implement && option.implement[index];
-    // implement delay
-    var implementDelay = option.implementDelay && option.implementDelay[index];
 
     // ultimate request data after requestKeys mapping
     var ultimateReqData = Object.assign({}, reqData || {});
@@ -350,23 +348,20 @@ module.exports = function (name, reqData) {
 
     // custom implement
     if (implement) {
-
-        var result = implement(!stringify ? ultimateReqData : JSON.stringify(ultimateReqData));
-
-        if (setting.debug) {
-            logger.info('Custom implement fetch for "' + name + '", and request data is:');
-            console.log(ultimateReqData);
-            logger.info('result for "' + name + '" is:');
-            console.log(result);
-        }
-
-        // post handle
-        postHandle(result, ultimateReqData, name);
-
         return new Promise(function (resolve) {
-            if (typeof implementDelay === 'number' && implementDelay > 0) setTimeout(function (_) {
+            implement(function (result) {
+                if (setting.debug) {
+                    logger.info('Custom implement fetch for "' + name + '", and request data is:');
+                    console.log(ultimateReqData);
+                    logger.info('result for "' + name + '" is:');
+                    console.log(result);
+                }
+
+                // post handle
+                postHandle(result, ultimateReqData, name);
+
                 resolve(result);
-            }, implementDelay);else resolve(result);
+            }, !stringify ? ultimateReqData : JSON.stringify(ultimateReqData));
         });
     } else {
         settings.method = method;
