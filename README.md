@@ -35,8 +35,7 @@ seeFetch.config(name, {
     responseRefactor: [...],
     preHandle: [...],
     postHandle: [...],
-    implement: [...],
-    implementDelay: [...]
+    implement: [...]
 });
 ```
 
@@ -159,24 +158,13 @@ Sometimes, you have to not use `fetch`, instead using other ways. So, this is wh
 
 ```
 implement: [
-    reqData => {... return a response ...}, // env: 0
-    reqData => {... return a response ...}, // env: 1
-    reqData => {... return a response ...}, // env: 2
+    (cb, reqData) => { ... cb(result) }, // env: 0
+    (cb, reqData) => { ... cb(result) }, // env: 1
+    (cb, reqData) => { ... cb(result) }, // env: 2
 ]
 ```
 
-* `note`: Every function should return a value, like `fetch` response.
-
-### implementDelay
-
-Milliseconds delay for implement, default is `0`.
-
-```
-implementDelay: [
-    1000, // 1 second delay
-    100 // 0.1 second delay
-]
-```
+* `note`: After get you own data, you should call `cb` callback(the first argument) with a result, like ajax response.
 
 ## api
 
