@@ -61,7 +61,8 @@ module.exports = seeFetch => {
             function (cb, req) {
                 console.log('req', req);
 
-                cb({
+                // cb({
+                return new Promise(resolve => resolve({
                     "result": 1,
                     "msg": "success",
                     "data": [
@@ -92,7 +93,8 @@ module.exports = seeFetch => {
                             ]
                         }
                     ]
-                })
+                }));
+                // });
             }
         ]
     });

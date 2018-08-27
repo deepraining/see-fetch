@@ -69,7 +69,7 @@ module.exports = (name, reqData) => {
     // custom implement
     if (implement) {
         return new Promise((resolve) => {
-            implement(result => {
+            const callback = result => {
                 if (setting.debug) {
                     logger.info(`Custom implement fetch for "${name}", and request data is:`);
                     console.log(ultimateReqData);
@@ -81,7 +81,17 @@ module.exports = (name, reqData) => {
                 postHandle(result, ultimateReqData, name);
 
                 resolve(result);
+            };
+
+            const promise = implement(result => {
+                callback(result);
             }, !stringify ? ultimateReqData : JSON.stringify(ultimateReqData));
+
+            if (promise && promise instanceof Promise) {
+                promise.then(result => {
+                    callback(result);
+                });
+            }
         });
     }
     else {

@@ -160,7 +160,7 @@ Sometimes, you have to not use `fetch`, instead using other ways. So, this is wh
 implement: [
     (cb, reqData) => { ... cb(result) }, // env: 0
     (cb, reqData) => { ... cb(result) }, // env: 1
-    (cb, reqData) => { ... cb(result) }, // env: 2
+    (cb, reqData) => { ... or return a promise }, // env: 2
 ]
 ```
 
