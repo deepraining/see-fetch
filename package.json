@@ -33,7 +33,7 @@
     "prettier": "prettier --write ./**/*.{js,json,md}",
     "eslint": "eslint .",
     "eslint:fix": "eslint . --fix",
-    "// lint-staged": "lint-staged",
+    "lint-staged": "lint-staged",
     "test": "jest",
     "cover": "npm run cover:init && npm run cover:all && npm run cover:report",
     "cover:init": "rimraf coverage",
