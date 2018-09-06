@@ -5,13 +5,13 @@
  * @returns {URLSearchParams}
  */
 module.exports = params => {
-    let search = new URLSearchParams();
+  const search = new URLSearchParams();
 
-    if (!params) return search;
+  if (!params) return search;
 
-    for (let attr in params) {
-        if (params.hasOwnProperty(attr)) search.append(attr, typeof params[attr] === 'undefined' ? '' : params[attr]);
-    }
+  Object.keys(params).forEach(key => {
+    search.append(key, typeof params[key] === 'undefined' ? '' : params[key]);
+  });
 
-    return search;
+  return search;
 };

@@ -4,15 +4,15 @@ A `window.fetch` wrapper, with customizing request keys, refactoring response, p
 
 ## requirements
 
-* [json-refactor](https://github.com/senntyou/json-refactor)
+- [json-refactor](https://github.com/senntyou/json-refactor)
 
 ## related
 
-* [see-ajax](https://github.com/senntyou/see-ajax)
+- [see-ajax](https://github.com/senntyou/see-ajax)
 
 ## note
 
-* Only for `json` response.
+- Only for `json` response.
 
 ## Quick start.
 
@@ -62,7 +62,7 @@ method: [
 
 Decide Whether to stringify request params. If `true`, the server will receive string, but not `key-value` pairs. Default is `false`.
 
-* note: If `GET` method, request params will not stringify at any time.
+- note: If `GET` method, request params will not stringify at any time.
 
 ```
 stringify: [
@@ -119,7 +119,7 @@ responseRefactor: [
 ]
 ```
 
-* `refactor rules`: see [json-refactor](https://github.com/senntyou/json-refactor)
+- `refactor rules`: see [json-refactor](https://github.com/senntyou/json-refactor)
 
 ### `preHandle`
 
@@ -159,7 +159,7 @@ implement: [
 ]
 ```
 
-* `note`: After getting your own result, you should call `cb` callback(the first argument) with a result, like ajax response, or return a Promise.
+- `note`: After getting your own result, you should call `cb` callback(the first argument) with a result, like ajax response, or return a Promise.
 
 ## api
 
@@ -204,14 +204,14 @@ seeFetch(name, params)
   .then(result => { ... });
 ```
 
-* `name`: Defined request name.
-    - `note`: `common` is a special request name, for this will apply to all request.
-* `params`: Request params.
-    - `type`: `map`
-    - `example`: `{a: 1, b: '2'}`
-* `result`: Handled ultimate response json result. But if response status is `3XX, 4XX, 5XX`, `result` will be like: `{error: true, response: Response}`
-    - `error`: Mark response having errors, and you can customize it by `seeFetch.set({errorField: 'yourErrorField'});`
-    - `response`: Original [Response Object](https://developer.mozilla.org/zh-CN/docs/Web/API/Response)
+- `name`: Defined request name.
+  - `note`: `common` is a special request name, for this will apply to all request.
+- `params`: Request params.
+  - `type`: `map`
+  - `example`: `{a: 1, b: '2'}`
+- `result`: Handled ultimate response json result. But if response status is `3XX, 4XX, 5XX`, `result` will be like: `{error: true, response: Response}`
+  - `error`: Mark response having errors, and you can customize it by `seeFetch.set({errorField: 'yourErrorField'});`
+  - `response`: Original [Response Object](https://developer.mozilla.org/zh-CN/docs/Web/API/Response)
 
 ### `set`
 
@@ -224,9 +224,9 @@ seeFetch.set({
 });
 ```
 
-* `errorField`: Config your own error field, default is `error`.
+- `errorField`: Config your own error field, default is `error`.
 
-* `debug`: Whether in debug mode, default is `true`.
+- `debug`: Whether in debug mode, default is `true`.
 
 ## Handlers sequences while processing.
 
@@ -236,12 +236,12 @@ seeFetch.set({
 4. `url`: Get request url.
 5. `requestKeys`: Get real request params.
 6. `preHandle`: More handling before send a request.
-    1. `common`: Common handling, if have.
-    2. `name`: Named handling.
+   1. `common`: Common handling, if have.
+   2. `name`: Named handling.
 7. `implement`: If have, return a custom response data, and will not send a fetch.
 8. `responseRefactor`: Refactoring response data.
-    1. `common`: Common handling, if have.
-    2. `name`: Named handling.
+   1. `common`: Common handling, if have.
+   2. `name`: Named handling.
 9. `postHandle`: More handling after refactoring response data.
-    1. `common`: Common handling, if have.
-    2. `name`: Named handling.
+   1. `common`: Common handling, if have.
+   2. `name`: Named handling.

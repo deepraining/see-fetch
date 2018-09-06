@@ -1,7 +1,4 @@
-
-'use strict';
-
-var data = require('./data');
+const data = require('./data');
 
 /**
  * get current environment
@@ -9,5 +6,5 @@ var data = require('./data');
  * @returns {Object.<string, *>|null|*|number}
  */
 module.exports = () => {
-    return data.env;
+  return data.env;
 };

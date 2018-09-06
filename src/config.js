@@ -1,6 +1,3 @@
-
-'use strict';
-
 const data = require('./data');
 
 /**
@@ -10,14 +7,14 @@ const data = require('./data');
  * @param option
  */
 module.exports = (name, option) => {
-    // one
-    if (typeof name === 'string') {
-        data.options[name] = option;
-    }
-    // multi
-    else {
-        for (let attr in name) {
-            if (name.hasOwnProperty(attr)) data.options[attr] = name[attr];
-        }
-    }
+  // one
+  if (typeof name === 'string') {
+    data.options[name] = option;
+  }
+  // multi
+  else {
+    Object.keys(name).forEach(key => {
+      data.options[key] = name[key];
+    });
+  }
 };

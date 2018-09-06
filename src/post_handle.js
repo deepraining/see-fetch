@@ -1,10 +1,6 @@
+const JSONRefactor = require('json-refactor');
 
-'use strict';
-
-var JSONRefactor = require('json-refactor');
-
-var data = require('./data');
-var logger = require('./util/logger');
+const data = require('./data');
 
 /**
  * post handle after get response data
@@ -14,25 +10,24 @@ var logger = require('./util/logger');
  * @param name Name
  */
 module.exports = (res, reqData, name) => {
+  // current option
+  const option = data.options[name];
+  // common option
+  const commonOption = data.options.common || {};
 
-    // current option
-    var option = data.options[name];
-    // common option
-    var commonOption = data.options['common'] || {};
+  // index to select item
+  const index = data.env;
 
-    // index to select item
-    var index = data.env;
+  // response refactor
+  const responseRefactor = option.responseRefactor && option.responseRefactor[index];
+  const commonResponseRefactor = commonOption.responseRefactor && commonOption.responseRefactor[index];
 
-    // response refactor
-    var responseRefactor = option.responseRefactor && option.responseRefactor[index];
-    var commonResponseRefactor = commonOption.responseRefactor && commonOption.responseRefactor[index];
+  // post handle
+  const postHandle = option.postHandle && option.postHandle[index];
+  const commonPostHandle = commonOption.postHandle && commonOption.postHandle[index];
 
-    // post handle
-    var postHandle = option.postHandle && option.postHandle[index];
-    var commonPostHandle = commonOption.postHandle && commonOption.postHandle[index];
-
-    commonResponseRefactor && JSONRefactor(res, commonResponseRefactor);
-    responseRefactor && JSONRefactor(res, responseRefactor);
-    commonPostHandle && commonPostHandle(res, reqData, name);
-    postHandle && postHandle(res, reqData, name);
+  if (commonResponseRefactor) JSONRefactor(res, commonResponseRefactor);
+  if (responseRefactor) JSONRefactor(res, responseRefactor);
+  if (commonPostHandle) commonPostHandle(res, reqData, name);
+  if (postHandle) postHandle(res, reqData, name);
 };

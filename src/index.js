@@ -1,6 +1,3 @@
-
-'use strict';
-
 const config = require('./config');
 const setEnv = require('./set_env');
 const getEnv = require('./get_env');
