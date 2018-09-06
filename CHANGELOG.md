@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0 [2018-09-06]
+
+- Use `microbundle` to build project.
+
 ## 0.1.1 [2018-08-27]
 
 - `implement` can return `Promise`.
