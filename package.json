@@ -53,6 +53,8 @@
     "husky": "^0.14.3",
     "istanbul": "^0.4.5",
     "jest": "^23.4.0",
+    "koa": "^2.5.2",
+    "koa-bodyparser": "^4.2.1",
     "lint-staged": "^7.2.0",
     "microbundle": "^0.6.0",
     "prettier": "^1.13.7",
