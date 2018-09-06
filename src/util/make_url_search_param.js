@@ -4,7 +4,7 @@
  * @param params
  * @returns {URLSearchParams}
  */
-module.exports = params => {
+export default function(params) {
   const search = new URLSearchParams();
 
   if (!params) return search;
@@ -14,4 +14,4 @@ module.exports = params => {
   });
 
   return search;
-};
+}

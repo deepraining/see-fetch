@@ -1,114 +1,121 @@
-const setting = require('./setting');
-const data = require('./data');
-const logger = require('./util/logger');
-const makeSearch = require('./util/make_search');
-const makeUrlSearch = require('./util/make_url_search');
-const fetchHandle = require('./fetch_handle');
-const postFetchHandle = require('./post_fetch_handle');
-const postHandle = require('./post_handle');
+import setting from './setting';
+import share from './share';
+import { info, error } from './util/logger';
+import makeSearch from './util/make_search';
+import makeUrlSearchParam from './util/make_url_search_param';
+import fetchHandle from './fetch_handle';
+import postFetchHandle from './post_fetch_handle';
+import postHandle from './post_handle';
 
 /**
- * send a request
+ * Make a request.
  *
- * @param name Defined request name
- * @param reqData Request data
+ * @param name Defined request name.
+ * @param params Request params.
  */
-module.exports = (name, reqData) => {
-  if (!name) {
-    logger.throwError(`name '${name}' is not defined.`);
+export default function(name, params) {
+  if (!name) return;
+
+  // Current options.
+  const options = share.optionsCollection[name];
+  // Common options.
+  const commonOptions = share.optionsCollection.common || {};
+
+  if (!options) {
+    error(`name '${name}' is not configured.`);
     return;
   }
 
-  // current option
-  const option = data.options[name];
-  // common option
-  const commonOption = data.options.common || {};
+  // Index to select item.
+  const index = share.env;
 
-  if (!option) {
-    logger.throwError(`name '${name}' is not configured.`);
-    return;
-  }
+  // Http method, default is `GET`.
+  const method = (options.method && options.method[index]) || 'get';
 
-  // index to select item
-  const index = data.env;
+  // Stringify request params.
+  const stringify = (options.stringify && options.stringify[index]) || !1;
 
-  // http method, default is GET
-  const method = (option.method && option.method[index]) || 'get';
-  // stringify request data
-  const stringify = (option.stringify && option.stringify[index]) || !1;
-  // fetch options
-  const settings = (option.settings && option.settings[index]) || {};
+  // Fetch options.
+  const settings = (options.settings && options.settings[index]) || {};
+
   // url
-  const url = (option.url && option.url[index]) || '';
-  // request keys
-  const requestKeys = (option.requestKeys && option.requestKeys[index]) || {};
-  // pre handle
-  const preHandle = option.preHandle && option.preHandle[index];
-  const commonPreHandle = commonOption.preHandle && commonOption.preHandle[index];
-  // implement
-  const implement = option.implement && option.implement[index];
+  const url = (options.url && options.url[index]) || '';
 
-  // ultimate request data after requestKeys mapping
-  const ultimateReqData = Object.assign({}, reqData || {});
-  Object.keys(ultimateReqData).forEach(key => {
-    if (requestKeys[key]) {
-      // make a new key
-      ultimateReqData[requestKeys[key]] = ultimateReqData[key];
-      // delete old key
-      delete ultimateReqData[key];
+  // Request keys.
+  const requestKeys = (options.requestKeys && options.requestKeys[index]) || {};
+
+  // Pre handle.
+  const preHandle = options.preHandle && options.preHandle[index];
+
+  const commonPreHandle = commonOptions.preHandle && commonOptions.preHandle[index];
+
+  // implement
+  const implement = options.implement && options.implement[index];
+
+  // Real request params.
+  let realParams = Object.assign({}, params || {});
+
+  // Request keys mapping handling.
+  Object.keys(realParams).forEach(key => {
+    const newKey = requestKeys[key];
+    if (newKey && typeof newKey === 'string') {
+      // Make a new key.
+      realParams[newKey] = realParams[key];
+      // Delete old key.
+      delete realParams[key];
     }
   });
 
-  // pre handle
-  if (commonPreHandle) commonPreHandle(ultimateReqData);
-  if (preHandle) preHandle(ultimateReqData);
+  // Pre handling.
+  if (commonPreHandle) {
+    const result = commonPreHandle(realParams);
 
-  // custom implement
+    // If return a new object, use it.
+    if (result) realParams = result;
+  }
+  if (preHandle) {
+    const result = preHandle(realParams);
+
+    // If return a new object, use it.
+    if (result) realParams = result;
+  }
+
+  // Custom implement.
   if (implement) {
     return new Promise(resolve => {
       const callback = result => {
         if (setting.debug) {
-          logger.info(`Custom implement fetch for "${name}", and request data is:`);
-          console.log(ultimateReqData);
-          logger.info(`result for "${name}" is:`);
-          console.log(result);
+          info(`custom fetch implement for '${name}', and request params is:`, realParams);
+          info(`result for '${name}' is:`, result);
         }
 
-        // post handle
-        postHandle(result, ultimateReqData, name);
-
-        resolve(result);
+        resolve(postHandle(result, realParams, name));
       };
 
+      // Use callback
       const promise = implement(result => {
         callback(result);
-      }, !stringify ? ultimateReqData : JSON.stringify(ultimateReqData));
+      }, !stringify ? realParams : JSON.stringify(realParams));
 
-      if (promise && promise instanceof Promise) {
+      // Return a Promise
+      if (promise && promise instanceof Promise)
         promise.then(result => {
           callback(result);
         });
-      }
     });
   } else {
     settings.method = method;
     if (method === 'get' || method === 'GET') {
-      const newUrl = url + (url.indexOf('?') < 0 ? '?' : '&') + makeSearch(ultimateReqData);
+      const newUrl = url + (url.indexOf('?') < 0 ? '?' : '&') + makeSearch(realParams);
       return fetch(newUrl, settings)
         .then(fetchHandle)
-        .then(postFetchHandle(name, ultimateReqData));
+        .then(postFetchHandle(name, realParams));
     }
 
-    if (stringify) {
-      settings.body = JSON.stringify(ultimateReqData);
-      return fetch(url, settings)
-        .then(fetchHandle)
-        .then(postFetchHandle(name, ultimateReqData));
-    }
+    settings.body = stringify ? JSON.stringify(realParams) : makeUrlSearchParam(realParams);
 
-    settings.body = makeUrlSearch(ultimateReqData);
     return fetch(url, settings)
       .then(fetchHandle)
-      .then(postFetchHandle(name, ultimateReqData));
+      .then(postFetchHandle(name, realParams));
   }
-};
+}

@@ -1,14 +1,8 @@
-const setting = require('./setting');
+import setting from './setting';
 
-module.exports = res => {
-  // has error
-  if (res.status >= 300) {
-    const ret = { response: res };
-
-    ret[setting.errorField] = !0;
-
-    return ret;
-  }
+export default function(res) {
+  // Has error
+  if (res.status >= 300) return { [setting.errorField]: !0, response: res };
 
   return res.json();
-};
+}

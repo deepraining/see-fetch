@@ -1,7 +1,9 @@
-const setting = require('./setting');
+import setting from './setting';
 
-module.exports = paramSetting => {
-  Object.keys(paramSetting).forEach(key => {
-    if (typeof paramSetting[key] !== 'undefined') setting[key] = paramSetting[key];
+export default function(params) {
+  if (!params) return;
+
+  Object.keys(params).forEach(key => {
+    setting[key] = params[key];
   });
-};
+}

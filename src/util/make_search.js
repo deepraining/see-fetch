@@ -4,7 +4,7 @@
  * @param params
  * @returns {string}
  */
-module.exports = params => {
+export default function(params) {
   if (!params) return '';
 
   const search = [];
@@ -14,4 +14,4 @@ module.exports = params => {
   });
 
   return search.join('&');
-};
+}

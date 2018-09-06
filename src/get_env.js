@@ -1,10 +1,6 @@
-const data = require('./data');
+import share from './share';
 
 /**
- * get current environment
- *
- * @returns {Object.<string, *>|null|*|number}
+ * Get current environment.
  */
-module.exports = () => {
-  return data.env;
-};
+export default () => share.env;

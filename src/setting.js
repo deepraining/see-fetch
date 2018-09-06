@@ -1,6 +1,6 @@
-module.exports = {
-  // error field when response statusCode
+export default {
+  // Error field when response status is `3XX, 4XX, 5XX`.
   errorField: 'error',
-  // whether current mode is debug
+  // Whether current mode is debug.
   debug: !0,
 };
