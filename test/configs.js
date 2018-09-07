@@ -1,3 +1,6 @@
+global.fetch = require('isomorphic-fetch');
+global.URLSearchParams = require('url-search-params');
+
 const seeFetch = require('../dist/see-fetch');
 const { port, response } = require('./share');
 
@@ -19,10 +22,10 @@ seeFetch.config('common', {
 });
 
 const fetch1Config = {
-  method: [undefined, 'post'],
-  stringify: [undefined, true],
-  settings: [undefined, { headers: { header1: 'header1' } }],
-  url: [`http://localhost:${port}/url11`, `http://localhost:${port}/url12`],
+  method: [undefined, 'post', 'put'],
+  stringify: [undefined, undefined, true],
+  settings: [{ headers: { header0: 'header0' } }, { headers: { header1: 'header1' } }],
+  url: [`http://localhost:${port}/url11`, `http://localhost:${port}/url12`, `http://localhost:${port}/url13`],
   requestKeys: [{ key1: 'key11', key2: 'key12' }, { key1: 'key21', key2: 'key22' }],
   responseRefactor: [
     { newData1: 'data', _newData1: [{ newImages1: 'images', _newImages1: [{ newUrl1: 'url' }] }] },
