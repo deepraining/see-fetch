@@ -14,7 +14,7 @@
     "handle"
   ],
   "source": "src/index.js",
-  "module": "dist/see-fetch.es.js",
+  "module": "dist/see-fetch.m.js",
   "umd:main": "dist/see-fetch.umd.js",
   "main": "dist/see-fetch.js",
   "files": [
