@@ -159,8 +159,6 @@ implement: [
 ]
 ```
 
-- `note`: After getting your own result, you should call `cb` callback(the first argument) with a result, like ajax response, or return a Promise.
-
 ## api
 
 ### `config`

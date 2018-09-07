@@ -1,5 +1,6 @@
 const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
+const { port, response } = require('./share');
 
 const app = new Koa();
 
@@ -26,30 +27,19 @@ app.use(bodyParser());
 app.use(ctx => {
   const { request } = ctx;
 
+  if (request.path === '/error') throw new Error('Errors occurred.');
+
   const requestInRes = {};
   keys.forEach(key => {
     requestInRes[key] = request[key];
   });
 
   ctx.body = JSON.stringify({
+    ...response,
     request: requestInRes,
-    code: 0,
-    msg: 'success',
-    data: [
-      {
-        id: 1,
-        name: 'name1',
-        images: [{ id: 11, url: 'url11' }, { id: 12, url: 'url12' }],
-      },
-      {
-        id: 2,
-        name: 'name2',
-        images: [{ id: 21, url: 'url21' }, { id: 22, url: 'url22' }],
-      },
-    ],
   });
 });
 
-const server = app.listen(3000);
+const server = app.listen(port);
 
 module.exports = server;
