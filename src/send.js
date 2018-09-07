@@ -2,7 +2,7 @@ import setting from './setting';
 import share from './share';
 import { info, error } from './util/logger';
 import makeSearch from './util/make_search';
-import makeUrlSearchParam from './util/make_url_search_param';
+import makeUrlSearchParams from './util/make_url_search_params';
 import fetchHandle from './fetch_handle';
 import postFetchHandle from './post_fetch_handle';
 import postHandle from './post_handle';
@@ -112,7 +112,16 @@ export default function(name, params) {
         .then(postFetchHandle(name, realParams));
     }
 
-    settings.body = stringify ? JSON.stringify(realParams) : makeUrlSearchParam(realParams);
+    settings.body = stringify ? JSON.stringify(realParams) : makeUrlSearchParams(realParams);
+
+    if (method !== 'get' && method !== 'GET' && method !== 'head' && method !== 'HEAD') {
+      if (!settings.headers) settings.headers = {};
+
+      if (!settings.headers['Content-Type'])
+        settings.headers['Content-Type'] = stringify
+          ? 'application/json'
+          : 'application/x-www-form-urlencoded;charset=UTF-8';
+    }
 
     return fetch(url, settings)
       .then(fetchHandle)

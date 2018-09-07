@@ -1,4 +1,5 @@
-global.fetch = require('isomorphic-fetch');
+const clone = require('clone');
+global.fetch = require('node-fetch');
 global.URLSearchParams = require('url-search-params');
 
 const seeFetch = require('../dist/see-fetch');
@@ -57,11 +58,11 @@ seeFetch.config({
     ...fetch1Config,
     implement: [
       (cb, params) => {
-        cb({ ...response, params });
+        cb({ ...clone(response), params });
       },
       (cb, params) =>
         new Promise(resolve => {
-          resolve({ ...response, params });
+          resolve({ ...clone(response), params });
         }),
     ],
   },
