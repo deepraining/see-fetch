@@ -1,17 +1,12 @@
+import config from './config';
+import setEnv from './set_env';
+import getEnv from './get_env';
+import send from './send';
+import set from './set';
 
-'use strict';
+send.config = config;
+send.setEnv = setEnv;
+send.getEnv = getEnv;
+send.set = set;
 
-const config = require('./config');
-const setEnv = require('./set_env');
-const getEnv = require('./get_env');
-const send = require('./send');
-const set = require('./set');
-
-const seeFetch = send;
-
-seeFetch.config = config;
-seeFetch.setEnv = setEnv;
-seeFetch.getEnv = getEnv;
-seeFetch.set = set;
-
-module.exports = seeFetch;
+export default send;

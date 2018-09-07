@@ -4,14 +4,14 @@
  * @param params
  * @returns {string}
  */
-module.exports = params => {
-    if (!params) return '';
+export default function(params) {
+  if (!params) return '';
 
-    let search = [];
+  const search = [];
 
-    for (let attr in params) {
-        if (params.hasOwnProperty(attr)) search.push(attr + '=' + (typeof params[attr] === 'undefined' ? '' : params[attr]));
-    }
+  Object.keys(params).forEach(key => {
+    search.push(`${key}=${typeof params[key] === 'undefined' ? '' : params[key]}`);
+  });
 
-    return search.join('&');
-};
+  return search.join('&');
+}

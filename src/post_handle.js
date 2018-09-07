@@ -1,38 +1,47 @@
+import JSONRefactor from 'json-refactor';
 
-'use strict';
-
-var JSONRefactor = require('json-refactor');
-
-var data = require('./data');
-var logger = require('./util/logger');
+import share from './share';
 
 /**
- * post handle after get response data
+ * Post handling after getting response data.
  *
- * @param res Response data
- * @param reqData Request data
- * @param name Name
+ * @param res Response data.
+ * @param params Request params.
+ * @param name Request name.
  */
-module.exports = (res, reqData, name) => {
+export default function(res, params, name) {
+  // Current options.
+  const options = share.optionsCollection[name];
+  // Common options.
+  const commonOptions = share.optionsCollection.common || {};
 
-    // current option
-    var option = data.options[name];
-    // common option
-    var commonOption = data.options['common'] || {};
+  // Index to select item.
+  const index = share.env;
 
-    // index to select item
-    var index = data.env;
+  // Response refactor.
+  const responseRefactor = options.responseRefactor && options.responseRefactor[index];
+  const commonResponseRefactor = commonOptions.responseRefactor && commonOptions.responseRefactor[index];
 
-    // response refactor
-    var responseRefactor = option.responseRefactor && option.responseRefactor[index];
-    var commonResponseRefactor = commonOption.responseRefactor && commonOption.responseRefactor[index];
+  // Post handle.
+  const postHandle = options.postHandle && options.postHandle[index];
+  const commonPostHandle = commonOptions.postHandle && commonOptions.postHandle[index];
 
-    // post handle
-    var postHandle = option.postHandle && option.postHandle[index];
-    var commonPostHandle = commonOption.postHandle && commonOption.postHandle[index];
+  let response = res;
 
-    commonResponseRefactor && JSONRefactor(res, commonResponseRefactor);
-    responseRefactor && JSONRefactor(res, responseRefactor);
-    commonPostHandle && commonPostHandle(res, reqData, name);
-    postHandle && postHandle(res, reqData, name);
-};
+  if (commonResponseRefactor) JSONRefactor(response, commonResponseRefactor);
+  if (responseRefactor) JSONRefactor(response, responseRefactor);
+  if (commonPostHandle) {
+    const result = commonPostHandle(response, params, name);
+
+    // If return a new object, use it.
+    if (result) response = result;
+  }
+  if (postHandle) {
+    const result = postHandle(response, params, name);
+
+    // If return a new object, use it.
+    if (result) response = result;
+  }
+
+  return response;
+}

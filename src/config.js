@@ -1,23 +1,20 @@
-
-'use strict';
-
-const data = require('./data');
+import share from './share';
 
 /**
- * config application
+ * Configure application.
  *
  * @param name
- * @param option
+ * @param options
  */
-module.exports = (name, option) => {
-    // one
-    if (typeof name === 'string') {
-        data.options[name] = option;
-    }
-    // multi
-    else {
-        for (let attr in name) {
-            if (name.hasOwnProperty(attr)) data.options[attr] = name[attr];
-        }
-    }
-};
+export default function(name, options) {
+  // One
+  if (typeof name === 'string') {
+    share.optionsCollection[name] = options;
+  }
+  // Multiple
+  else {
+    Object.keys(name).forEach(key => {
+      share.optionsCollection[key] = name[key];
+    });
+  }
+}

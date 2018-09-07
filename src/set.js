@@ -1,10 +1,9 @@
+import setting from './setting';
 
-const setting = require('./setting');
+export default function(params) {
+  if (!params) return;
 
-module.exports = paramSetting => {
-    for (let attr in paramSetting) {
-        if (paramSetting.hasOwnProperty(attr) && typeof paramSetting[attr] !== 'undefined') {
-            setting[attr] = paramSetting[attr];
-        }
-    }
-};
+  Object.keys(params).forEach(key => {
+    setting[key] = params[key];
+  });
+}

@@ -1,11 +1,8 @@
-
-'use strict';
-
-var data = require('./data');
+import share from './share';
 
 /**
- * set current environment
+ * Set current environment.
  */
-module.exports = (env) => {
-    data.env = env;
-};
+export default function(env) {
+  share.env = env;
+}
