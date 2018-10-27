@@ -1,6 +1,6 @@
 # see-fetch
 
-A `window.fetch` wrapper, with customizing request keys, refactoring response, pre handling, post handling, etc.
+A `window.fetch` wrapper, with response refactoring, pre handling, post handling, etc.
 
 ## requirements
 
@@ -12,158 +12,91 @@ A `window.fetch` wrapper, with customizing request keys, refactoring response, p
 
 ## note
 
-- Only for `json` response.
+Only for `json` response.
 
-## Quick start.
-
-```
-const seeFetch = require('see-fetch');
-```
-
-Configure application.
+## quick start
 
 ```
+npm install see-fetch --save
+```
+
+```
+import seeFetch from 'see-fetch';
+
+// configure application
 seeFetch.config(name, {
-  method: [...],
-  stringify: [...],
-  settings: [...],
-  url: [...],
-  requestKeys: [...],
-  responseRefactor: [...],
-  preHandle: [...],
-  postHandle: [...],
-  implement: [...]
+  method,
+  stringify,
+  settings,
+  url,
+  req,
+  refactor,
+  pre,
+  post,
+  implement,
 });
+
+// make a request
+seeFetch(name, params).then(result => { ... });
 ```
 
-Make a request.
+## config options
+
+### `method`: `string`, default `get`, which http method to use
 
 ```
-seeFetch(name, params)
-    .then(result => { ... });
+'post/put/delete'
 ```
 
-## Config options.
+### `stringify`: `bool`, default `false`, whether to stringify request params, if `true`, the server will receive string, but not `key-value` pairs
 
-### `method`
+If `GET` method, request params will not stringify at any time.
 
-Decide which http method to use. Default is `GET`.
-
-```
-method: [
-    'delete', // env: 0, DELETE
-    'put', // env: 1, PUT
-    'post'// env: 2, POST
-    // other env, GET
-]
-```
-
-### `stringify`
-
-Decide Whether to stringify request params. If `true`, the server will receive string, but not `key-value` pairs. Default is `false`.
-
-- note: If `GET` method, request params will not stringify at any time.
+### `settings`: `{}`, extra fetch options
 
 ```
-stringify: [
-    undefined, // env: 0, no
-    true // env: 1, yes
-    // other env, no
-]
+{ ... }
 ```
 
-### `settings`
+### `url`: `string`, url to request
 
-Extra fetch options.
-
-```
-settings: [
-    {...}, // env: 0
-    {...} // env: 1
-]
-```
-
-### `url`
-
-Url to request.
+### `req/requestKeys`: `{}`, keys mapping of request params
 
 ```
-url: [
-    'url1', //env: 0
-    'url2', //env: 1
-    'url3' //env: 2
-]
+{sourceKey: 'newKey'}
 ```
 
-### `requestKeys`
-
-Request keys mapping.
+### `refactor/responseRefactor`: `{}`, rules to refactor response using [json-refactor](https://github.com/senntyou/json-refactor)
 
 ```
-requestKeys: [
-    {sourceKey: 'newKey'}, // env: 0
-    {sourceKey: 'newKey'}, // env: 1
-    {sourceKey: 'newKey'}, // env: 2
-]
+refactor: rules
 ```
 
-### `responseRefactor`
+- `rules`: see [json-refactor](https://github.com/senntyou/json-refactor)
 
-Refactor response json data, after `fetch` responding.
-
-```
-responseRefactor: [
-    {... refactor rules ...}, // env: 0
-    {... refactor rules ...}, // env: 1
-    {... refactor rules ...}, // env: 2
-]
-```
-
-- `refactor rules`: see [json-refactor](https://github.com/senntyou/json-refactor)
-
-### `preHandle`
-
-More handling after `requestKeys`, before `fetch` sending.
+### `pre/preHandle`: `function`, more handling to request params
 
 ```
-preHandle: [
-    params => {... modify params, or return a new params ...}, // env: 0
-    params => {... modify params, or return a new params ...}, // env: 1
-    params => {... modify params, or return a new params ...}, // env: 2
-]
+params => {... modify params, or return a new params ...}
 ```
 
-### `postHandle`
-
-More handling after `responseRefactor`.
+### `post/postHandle`: `function`, more handling to response data
 
 ```
-postHandle: [
-    (result, params, name) => {... modify result, or return a new result }, // env: 0
-    (result, params, name) => {... modify result, or return a new result }, // env: 1
-    (result, params, name) => {... modify result, or return a new result }, // env: 2
-]
+(result, params, name) => {... modify result, or return a new result }
 ```
 
-### `implement`
-
-Custom request implementing instead of `fetch`.
+### `implement`: `function`, custom implementing instead of `fetch`
 
 Sometimes, you have to not use `fetch`, but other ways, like html templates.
 
 ```
-implement: [
-    (cb, params) => { ... cb(result), or return a Promise }, // env: 0
-    (cb, params) => { ... cb(result), or return a Promise }, // env: 1
-    (cb, params) => { ... cb(result), or return a Promise }, // env: 2
-]
+(cb, params) => { ... cb(result), or return a Promise }
 ```
 
 ## api
 
-### `config`
-
-Configure application.
+### `seeFetch.config`: configure application
 
 ```
 // one
@@ -177,43 +110,55 @@ seeFetch.config({
 });
 ```
 
-### `setEnv`
-
-Set current environment.
+### `seeFetch.setEnv`: set current environment(index to get config options)
 
 ```
 seeFetch.setEnv(0/1/2/3);
 ```
 
-### `getEnv`
+If you need multiple environments supports, you can configure all config options by array, and then set a env.
 
-Get current environment.
+If you don't set an environment, 0 will be the default.
+
+```
+seeFetch.config(name, {
+  method: [method1, method2, ...],
+  stringify: [stringify1, stringify2, ...],
+  settings: [settings1, settings2, ...],
+  url: [url1, url2, ...],
+  req: [req1, req2, ...],
+  refactor: [refactor1, refactor2, ...],
+  pre: [pre1, pre2, ...],
+  post: [post1, post2, ...],
+  implement: [implement1, implement2, ...],
+});
+
+seeFetch.setEnv(0); // method1, stringify1, url1, ...
+seeFetch.setEnv(1); // method2, stringify2, url2, ...
+```
+
+### `seeFetch.getEnv`: get current environment
 
 ```
 const env = seeFetch.getEnv(); // 0/1/2/3
 ```
 
-### `seeFetch`
-
-Make a request.
+### `seeFetch`: make a request
 
 ```
-seeFetch(name, params)
-  .then(result => { ... });
+seeFetch(name, params).then(result => { ... });
 ```
 
-- `name`: Defined request name.
-  - `note`: `common` is a special request name, for this will apply to all request.
-- `params`: Request params.
+- `name`: defined request name
+  - `note`: `common` is a special request name, and it will apply to all requests
+- `params`: request params
   - `type`: `map`
   - `example`: `{a: 1, b: '2'}`
-- `result`: Handled ultimate response json result. But if response status is `3XX, 4XX, 5XX`, `result` will be like: `{error: true, response: Response}`
-  - `error`: Mark response having errors, and you can customize it by `seeFetch.set({errorField: 'yourErrorField'});`
-  - `response`: Original [Response Object](https://developer.mozilla.org/zh-CN/docs/Web/API/Response)
+- `result`: handled response data. But if response's status code is `3XX, 4XX, 5XX`, `result` will be like: `{error: true, response: Response}`
+  - `error`: mark response having an error, and you can customize it by `seeFetch.set({errorField: 'yourErrorField'})`
+  - `response`: original [Response Object](https://developer.mozilla.org/zh-CN/docs/Web/API/Response)
 
-### `set`
-
-Set custom config.
+### `seeFetch.set`: set custom config
 
 ```
 seeFetch.set({
@@ -222,24 +167,23 @@ seeFetch.set({
 });
 ```
 
-- `errorField`: Config your own error field, default is `error`.
+- `errorField`: `string`, default `error`, configure your own error field
+- `debug`: `bool`, default `true`, whether in debug mode
 
-- `debug`: Whether in debug mode, default is `true`.
+## handlers sequences while processing
 
-## Handlers sequences while processing.
-
-1. `method`: Check which http method to use, default is `GET`.
-2. `stringify`: Check whether to stringify request params.
-3. `settings`: Check extra fetch settings.
-4. `url`: Get request url.
-5. `requestKeys`: Get real request params.
-6. `preHandle`: More handling before send a request.
-   1. `common`: Common handling, if have.
-   2. `name`: Named handling.
-7. `implement`: If have, return a custom response data, and will not send a fetch.
-8. `responseRefactor`: Refactoring response data.
-   1. `common`: Common handling, if have.
-   2. `name`: Named handling.
-9. `postHandle`: More handling after refactoring response data.
-   1. `common`: Common handling, if have.
-   2. `name`: Named handling.
+1. `method`: check which http method to use, default is `GET`
+2. `stringify`: check whether to stringify request params
+3. `settings`: check extra fetch settings
+4. `url`: get request url
+5. `req`: get real request params
+6. `pre`: more handling before send a request
+   1. `common`: common handling, if have
+   2. `name`: named handling
+7. `implement`: if have, `see-fetch` will not send a `fetch`
+8. `refactor`: refactoring response data
+   1. `common`: common handling, if have
+   2. `name`: named handling
+9. `post`: more handling after refactoring response data
+   1. `common`: common handling, if have
+   2. `name`: named handling

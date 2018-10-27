@@ -1,27 +1,29 @@
 {
-  "name": "json-refactor",
+  "name": "see-fetch",
   "version": "1.0.0",
   "main": "lib/cjs.js",
   "module": "lib/m.js",
   "umd:main": "lib/umd.js",
   "amd:main": "lib/amd.js",
-  "description": "Refactor JSON object structure based on provided rules.",
+  "description": "A window.fetch wrapper, with response refactoring, pre handling, post handling, etc.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/senntyou/json-refactor"
+    "url": "https://github.com/senntyou/see-fetch"
   },
   "keywords": [
+    "window.fetch",
+    "fetch",
+    "wrapper",
     "json",
     "refactor",
-    "format",
-    "rule",
-    "structure"
+    "response",
+    "handle"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/senntyou/json-refactor/issues"
+    "url": "https://github.com/senntyou/see-fetch/issues"
   },
-  "homepage": "https://github.com/senntyou/json-refactor",
+  "homepage": "https://github.com/senntyou/see-fetch",
   "readmeFilename": "README.md",
   "files": [
     "lib"
@@ -38,7 +40,9 @@
     "test": "jest test",
     "test:base": "jest test/base.test.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "json-refactor": "^1.0.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
