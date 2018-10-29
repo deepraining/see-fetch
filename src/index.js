@@ -1,33 +1,33 @@
 import refactor from 'json-refactor';
-import { getOption } from './util';
-// import {error} from "./logger";
+import { getOption, makeSearch, makeUrlSearchParams } from './util';
+import { error, info } from './logger';
 
 let env = 0;
 
-export const setEnv = e => {
+const setEnv = e => {
   env = e;
 };
 
-export const getEnv = () => env;
+const getEnv = () => env;
 
-const settings = {
+const sets = {
   // error field when response's status code is `3XX, 4XX, 5XX`
   errorField: 'error',
   // whether current mode is debug
   debug: !0,
 };
 
-export const setSettings = params => {
+const setSettings = params => {
   Object.keys(params).forEach(key => {
-    settings[key] = params[key];
+    sets[key] = params[key];
   });
 };
 
-export const getSetting = name => settings[name];
+// const getSetting = name => sets[name];
 
 const configs = {};
 
-export const addConfig = (name, options) => {
+const addConfig = (name, options) => {
   // One
   if (options) {
     configs[name] = options;
@@ -40,18 +40,18 @@ export const addConfig = (name, options) => {
   }
 };
 
-export const getConfig = name => configs[name];
+// const getConfig = name => configs[name];
 
-export const afterFetch = res => {
+const afterFetch = res => {
   // has error
-  if (res.status >= 300) return { [settings.errorField]: !0, response: res };
+  if (res.status >= 300) return { [sets.errorField]: !0, response: res };
 
   return res.json();
 };
 
-export const postHandle = (name, params) => res => {
+const postHandle = (name, params) => res => {
   // has error
-  if (res[settings.errorField]) return res;
+  if (res[sets.errorField]) return res;
 
   // current config
   const nConfig = configs[name];
@@ -96,116 +96,126 @@ export const postHandle = (name, params) => res => {
   return response;
 };
 
-// export const send = (name, params) => {
-//   if (!name) return;
-//
-//   // current config
-//   const nConfig = configs[name];
-//   // common config
-//   const cConfig = configs.common || {};
-//
-//   if (!nConfig) {
-//     error(`name ${name} is not configured`);
-//     return;
-//   }
-//
-//   const {
-//     method: nMethod,
-//     stringify: nStringify,
-//     settings: nSettings,
-//   } = nConfig;
-//
-//   const method = getOption(env, nMethod) || 'get';
-//   const stringify = getOption(env, nStringify) || !1;
-//   const settings = getOption(env, nSettings) || {};
-//
-//   // url
-//   const url = (options.url && options.url[index]) || '';
-//
-//   // Request keys.
-//   const requestKeys = (options.requestKeys && options.requestKeys[index]) || {};
-//
-//   // Pre handle.
-//   const preHandle = options.preHandle && options.preHandle[index];
-//
-//   const commonPreHandle = commonOptions.preHandle && commonOptions.preHandle[index];
-//
-//   // implement
-//   const implement = options.implement && options.implement[index];
-//
-//   // Real request params.
-//   let realParams = Object.assign({}, params || {});
-//
-//   // Request keys mapping handling.
-//   Object.keys(realParams).forEach(key => {
-//     const newKey = requestKeys[key];
-//     if (newKey && typeof newKey === 'string') {
-//       // Make a new key.
-//       realParams[newKey] = realParams[key];
-//       // Delete old key.
-//       delete realParams[key];
-//     }
-//   });
-//
-//   // Pre handling.
-//   if (commonPreHandle) {
-//     const result = commonPreHandle(realParams);
-//
-//     // If return a new object, use it.
-//     if (result) realParams = result;
-//   }
-//   if (preHandle) {
-//     const result = preHandle(realParams);
-//
-//     // If return a new object, use it.
-//     if (result) realParams = result;
-//   }
-//
-//   // Custom implement.
-//   if (implement) {
-//     return new Promise(resolve => {
-//       const callback = result => {
-//         if (setting.debug) {
-//           info(`custom fetch implement for '${name}', and request params is:`, realParams);
-//           info(`result for '${name}' is:`, result);
-//         }
-//
-//         resolve(postHandle(result, realParams, name));
-//       };
-//
-//       // Use callback
-//       const promise = implement(result => {
-//         callback(result);
-//       }, !stringify ? realParams : JSON.stringify(realParams));
-//
-//       // Return a Promise
-//       if (promise && promise instanceof Promise)
-//         promise.then(result => {
-//           callback(result);
-//         });
-//     });
-//   } else {
-//     settings.method = method;
-//     if (method === 'get' || method === 'GET') {
-//       const newUrl = url + (url.indexOf('?') < 0 ? '?' : '&') + makeSearch(realParams);
-//       return fetch(newUrl, settings)
-//         .then(fetchHandle)
-//         .then(postFetchHandle(name, realParams));
-//     }
-//
-//     settings.body = stringify ? JSON.stringify(realParams) : makeUrlSearchParams(realParams);
-//
-//     if (method !== 'get' && method !== 'GET' && method !== 'head' && method !== 'HEAD') {
-//       if (!settings.headers) settings.headers = {};
-//
-//       if (!settings.headers['Content-Type'])
-//         settings.headers['Content-Type'] = stringify
-//           ? 'application/json'
-//           : 'application/x-www-form-urlencoded;charset=UTF-8';
-//     }
-//
-//     return fetch(url, settings)
-//       .then(fetchHandle)
-//       .then(postFetchHandle(name, realParams));
-//   }
-// };
+const send = (name, params) => {
+  if (!name) return;
+
+  // current config
+  const nConfig = configs[name];
+  // common config
+  const cConfig = configs.common || {};
+
+  if (!nConfig) {
+    error(`name ${name} is not configured`);
+    return;
+  }
+
+  const {
+    method: nMethod,
+    stringify: nStringify,
+    settings: nSettings,
+    url: nUrl,
+    req: nReq,
+    requestKeys: nRequestKeys,
+    pre: nPre,
+    preHandle: nPreHandle,
+    implement: nImplement,
+  } = nConfig;
+
+  const { pre: cPre, preHandle: cPreHandle } = cConfig;
+
+  const method = getOption(env, nMethod) || 'get';
+  const stringify = getOption(env, nStringify) || !1;
+  const settings = getOption(env, nSettings) || {};
+  const url = getOption(env, nUrl) || '';
+  const req = getOption(env, nReq, nRequestKeys) || {};
+  const pre = getOption(env, nPre, nPreHandle);
+  const commonPre = getOption(env, cPre, cPreHandle);
+  const implement = getOption(env, nImplement);
+
+  let realParams = { ...params };
+
+  Object.keys(realParams).forEach(key => {
+    const newKey = req[key];
+    if (newKey && typeof newKey === 'string') {
+      // make a new key
+      realParams[newKey] = realParams[key];
+      // delete old key
+      delete realParams[key];
+    }
+  });
+
+  if (commonPre) {
+    const result = commonPre(realParams);
+
+    // if return a new object, use it
+    if (result) realParams = result;
+  }
+  if (pre) {
+    const result = pre(realParams);
+
+    // if return a new object, use it
+    if (result) realParams = result;
+  }
+
+  if (implement) {
+    /* eslint-disable consistent-return */
+    return new Promise(resolve => {
+      const callback = result => {
+        if (sets.debug) {
+          info(`custom fetch implement for name[${name}]:`);
+          info(`request params is`, realParams);
+          info(`result is`, result);
+        }
+
+        resolve(postHandle(name, realParams)(result));
+      };
+
+      const promise = implement(result => {
+        callback(result);
+      }, !stringify ? realParams : JSON.stringify(realParams));
+
+      // return a Promise
+      if (promise && promise instanceof Promise)
+        promise.then(result => {
+          callback(result);
+        });
+    });
+  }
+  settings.method = method;
+  if (method === 'get' || method === 'GET') {
+    const newUrl =
+      url + (url.indexOf('?') < 0 ? '?' : '&') + makeSearch(realParams);
+    return fetch(newUrl, settings)
+      .then(afterFetch)
+      .then(postHandle(name, realParams));
+  }
+
+  settings.body = stringify
+    ? JSON.stringify(realParams)
+    : makeUrlSearchParams(realParams);
+
+  if (
+    method !== 'get' &&
+    method !== 'GET' &&
+    method !== 'head' &&
+    method !== 'HEAD'
+  ) {
+    if (!settings.headers) settings.headers = {};
+
+    if (!settings.headers['Content-Type'])
+      settings.headers['Content-Type'] = stringify
+        ? 'application/json'
+        : 'application/x-www-form-urlencoded;charset=UTF-8';
+  }
+
+  return fetch(url, settings)
+    .then(afterFetch)
+    .then(postHandle(name, realParams));
+};
+
+send.config = addConfig;
+send.setEnv = setEnv;
+send.getEnv = getEnv;
+send.set = setSettings;
+
+export default send;
