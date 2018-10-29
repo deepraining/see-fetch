@@ -42,31 +42,47 @@ seeFetch(name, params).then(result => { ... });
 
 ## config options
 
-### `method`: `string`, default `get`, which http method to use
+### `method`: which http method to use
+
+- `type`: `string`
+- `default`: `get`
 
 ```
 'post/put/delete'
 ```
 
-### `stringify`: `bool`, default `false`, whether to stringify request params, if `true`, the server will receive string, but not `key-value` pairs
+### `stringify`: whether to stringify request params
+
+- `type`: `bool`
+- `default`: `false`
+
+If `true`, the server will receive string, but not `key-value` pairs.
 
 If `GET` method, request params will not stringify at any time.
 
-### `settings`: `{}`, extra fetch options
+### `settings`: extra fetch options
 
-```
-{ ... }
-```
+- `type`: `map`
+- `default`: `{}`
 
-### `url`: `string`, url to request
+### `url`: url to request
 
-### `req/requestKeys`: `{}`, keys mapping of request params
+- `type`: `string`
+- `default`: empty string
+
+### `req/requestKeys`: keys mapping of request params
+
+- `type`: `map`
+- `default`: `{}`
 
 ```
 {sourceKey: 'newKey'}
 ```
 
-### `refactor/responseRefactor`: `{}`, rules to refactor response using [json-refactor](https://github.com/senntyou/json-refactor)
+### `refactor/responseRefactor`: rules to refactor response using [json-refactor](https://github.com/senntyou/json-refactor)
+
+- `type`: `map`
+- `default`: `{}`
 
 ```
 refactor: rules
@@ -74,25 +90,31 @@ refactor: rules
 
 - `rules`: see [json-refactor](https://github.com/senntyou/json-refactor)
 
-### `pre/preHandle`: `function`, more handling to request params
+### `pre/preHandle`: more handling to request params
+
+- `type`: `function`
 
 ```
 params => {... modify params, or return a new params ...}
 ```
 
-### `post/postHandle`: `function`, more handling to response data
+### `post/postHandle`: more handling to response data
+
+- `type`: `function`
 
 ```
 (result, params, name) => {... modify result, or return a new result }
 ```
 
-### `implement`: `function`, custom implementing instead of `fetch`
+### `implement`: custom implementing instead of `fetch`
 
-Sometimes, you have to not use `fetch`, but other ways, like html templates.
+- `type`: `function`
 
 ```
 (cb, params) => { ... cb(result), or return a Promise }
 ```
+
+Sometimes, you have to not use `fetch`, but other ways, like html templates.
 
 ## api
 
