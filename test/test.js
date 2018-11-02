@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 // this should be the first
 require('./configs');
 
@@ -58,15 +59,16 @@ describe('all fetch tests', () => {
       expect(request.headers.header0).toBe('header0');
       expect(request.method).toBe('GET');
       expect(request.path).toBe('/url11');
-      expect(request.url).toBe(
+      expect(request.url).toContain(
         '/url11?key3=3&key11=1&key12=2&common=0&fetch1=0'
       );
-      expect(Object.keys(request.query).length).toBe(5);
+      expect(Object.keys(request.query).length).toBe(6);
       expect(request.query.key11).toBe('1');
       expect(request.query.key12).toBe('2');
       expect(request.query.key3).toBe('3');
       expect(request.query.common).toBe('0');
       expect(request.query.fetch1).toBe('0');
+      expect(request.query._).toBeDefined();
       expect(Object.keys(request.body).length).toBe(0);
 
       expect(res.code).toBe(0);
@@ -141,6 +143,7 @@ describe('all fetch tests', () => {
 
   test('fetch "fetch2" [env=0].', done => {
     seeFetch.setEnv(0);
+    seeFetch.set({ disableCacheField: '__' });
 
     seeFetch('fetch2', { key1: 1, key2: 2, key3: '3' }).then(res => {
       const { request } = res;
@@ -148,11 +151,12 @@ describe('all fetch tests', () => {
       expect(seeFetch.getEnv()).toBe(0);
 
       expect(request.method).toBe('GET');
-      expect(request.url).toBe('/url21?key1=1&key2=2&key3=3&common=0');
-      expect(Object.keys(request.query).length).toBe(4);
+      expect(request.url).toContain('/url21?key1=1&key2=2&key3=3&common=0');
+      expect(Object.keys(request.query).length).toBe(5);
       expect(request.query.key1).toBe('1');
       expect(request.query.key2).toBe('2');
       expect(request.query.key3).toBe('3');
+      expect(request.query.__).toBeDefined();
       expect(Object.keys(request.body).length).toBe(0);
 
       done();
@@ -161,6 +165,7 @@ describe('all fetch tests', () => {
 
   test('fetch "fetch2" [env=1].', done => {
     seeFetch.setEnv(1);
+    seeFetch.set({ disableCache: !1 });
 
     seeFetch('fetch2', { key1: 1, key2: 2, key3: '3' }).then(res => {
       const { request } = res;
@@ -173,6 +178,8 @@ describe('all fetch tests', () => {
       expect(request.query.key1).toBe('1');
       expect(request.query.key2).toBe('2');
       expect(request.query.key3).toBe('3');
+      expect(request.query._).toBeUndefined();
+      expect(request.query.__).toBeUndefined();
       expect(Object.keys(request.body).length).toBe(0);
 
       done();

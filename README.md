@@ -95,7 +95,7 @@ refactor: rules
 - `type`: `function`
 
 ```
-params => {... modify params, or return a new params ...}
+(params, name) => {... modify params, or return a new params ...}
 ```
 
 ### `post/postHandle`: more handling to response data
@@ -126,9 +126,9 @@ seeFetch.config(name, options);
 
 // multiple
 seeFetch.config({
-    name1: options1,
-    name2: options2,
-    ...
+  name1: options1,
+  name2: options2,
+  ...
 });
 ```
 
@@ -184,13 +184,17 @@ seeFetch(name, params).then(result => { ... });
 
 ```
 seeFetch.set({
-    errorField: 'error',
-    debug: !0
+  errorField: 'error',
+  debug: !0,
+  disableCache: !0,
+  disableCacheField: '_',
 });
 ```
 
-- `errorField`: `string`, default `error`, configure your own error field
-- `debug`: `bool`, default `true`, whether in debug mode
+- `errorField`: `type: string` `default: error` configure your own error field
+- `debug`: `type: bool` `default: true` whether in debug mode
+- `disableCache`: `type: bool` `default: true` disable request cache for `GET, HEAD` methods
+- `disableCacheField`: `type: string` `default: _` field name for appending timestamp to original url when `disableCache` is `true`
 
 ## handlers sequences while processing
 

@@ -15,6 +15,10 @@ const sets = {
   errorField: 'error',
   // whether current mode is debug
   debug: !0,
+  // disable request cache for `GET, HEAD` methods
+  disableCache: !0,
+  // field name for appending timestamp to original url when `disableCache` is `true`
+  disableCacheField: '_',
 };
 
 const setSettings = params => {
@@ -123,7 +127,7 @@ const send = (name, params) => {
 
   const { pre: cPre, preHandle: cPreHandle } = cConfig;
 
-  const method = getOption(env, nMethod) || 'get';
+  const method = (getOption(env, nMethod) || 'get').toUpperCase();
   const stringify = getOption(env, nStringify) || !1;
   const settings = getOption(env, nSettings) || {};
   const url = getOption(env, nUrl) || '';
@@ -145,13 +149,13 @@ const send = (name, params) => {
   });
 
   if (commonPre) {
-    const result = commonPre(realParams);
+    const result = commonPre(realParams, name);
 
     // if return a new object, use it
     if (result) realParams = result;
   }
   if (pre) {
-    const result = pre(realParams);
+    const result = pre(realParams, name);
 
     // if return a new object, use it
     if (result) realParams = result;
@@ -182,9 +186,14 @@ const send = (name, params) => {
     });
   }
   settings.method = method;
-  if (method === 'get' || method === 'GET') {
+  if (method === 'GET' || method === 'HEAD') {
+    const usedParams = { ...realParams };
+
+    if (sets.disableCache)
+      usedParams[sets.disableCacheField] = new Date().getTime();
+
     const newUrl =
-      url + (url.indexOf('?') < 0 ? '?' : '&') + makeSearch(realParams);
+      url + (url.indexOf('?') < 0 ? '?' : '&') + makeSearch(usedParams);
     return fetch(newUrl, settings)
       .then(afterFetch)
       .then(postHandle(name, realParams));
@@ -194,19 +203,12 @@ const send = (name, params) => {
     ? JSON.stringify(realParams)
     : makeUrlSearchParams(realParams);
 
-  if (
-    method !== 'get' &&
-    method !== 'GET' &&
-    method !== 'head' &&
-    method !== 'HEAD'
-  ) {
-    if (!settings.headers) settings.headers = {};
+  if (!settings.headers) settings.headers = {};
 
-    if (!settings.headers['Content-Type'])
-      settings.headers['Content-Type'] = stringify
-        ? 'application/json'
-        : 'application/x-www-form-urlencoded;charset=UTF-8';
-  }
+  if (!settings.headers['Content-Type'])
+    settings.headers['Content-Type'] = stringify
+      ? 'application/json'
+      : 'application/x-www-form-urlencoded;charset=UTF-8';
 
   return fetch(url, settings)
     .then(afterFetch)
