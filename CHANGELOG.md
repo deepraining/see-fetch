@@ -1,5 +1,9 @@
 # changelog
 
+## 1.0.1 [2018-11-02]
+
+- Add `cache, cacheField` configs.
+
 ## 1.0.0 [2018-10-27]
 
 - Use `rollup` to build project.
