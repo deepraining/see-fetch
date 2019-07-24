@@ -1,20 +1,22 @@
 # see-fetch
 
-A `window.fetch` wrapper, with response refactoring, pre handling, post handling, etc.
+[English Documentation](./README.en.md)
 
-## requirements
+一个 `window.fetch` 封装器, 能够对响应 Json 对象进行重构, 预处理请求对象, 后置处理响应数据等.
+
+## 依赖
 
 - [json-refactor](https://github.com/senntyou/json-refactor)
 
-## related
+## 相关
 
 - [see-ajax](https://github.com/senntyou/see-ajax)
 
-## note
+## 注意
 
-Only for `json` response.
+仅适用于 `json` 数据响应.
 
-## quick start
+## 快速开始
 
 ```
 npm install see-fetch --save
@@ -23,7 +25,7 @@ npm install see-fetch --save
 ```
 import seeFetch from 'see-fetch';
 
-// configure application
+// 配置应用
 seeFetch.config(name, {
   method,
   stringify,
@@ -36,13 +38,13 @@ seeFetch.config(name, {
   implement,
 });
 
-// make a request
+// 发起一个请求
 seeFetch(name, params).then(result => { ... });
 ```
 
-## config options
+## 配置项
 
-### `method`: which http method to use
+### `method`: 使用哪个 http 方法
 
 - `type`: `string`
 - `default`: `get`
@@ -51,26 +53,26 @@ seeFetch(name, params).then(result => { ... });
 'post/put/delete'
 ```
 
-### `stringify`: whether to stringify request params
+### `stringify`: 是否序列化请求参数
 
 - `type`: `bool`
 - `default`: `false`
 
-If `true`, the server will receive string, but not `key-value` pairs.
+如果为 `true`, 则服务器将会收到字符串, 而非 `key-value` 对.
 
-If `GET` method, request params will not stringify at any time.
+如果是 `GET` 方法, 请求参数在任何情况下都不会被序列化.
 
-### `settings`: extra fetch options
+### `settings`: 额外的 fetch 配置
 
 - `type`: `map`
 - `default`: `{}`
 
-### `url`: url to request
+### `url`: 请求链接
 
 - `type`: `string`
-- `default`: empty string
+- `default`: 空
 
-### `req/requestKeys`: keys mapping of request params
+### `req/requestKeys`: 请求参数键名的映射
 
 - `type`: `map`
 - `default`: `{}`
@@ -79,7 +81,7 @@ If `GET` method, request params will not stringify at any time.
 {sourceKey: 'newKey'}
 ```
 
-### `refactor/responseRefactor`: rules to refactor response using [json-refactor](https://github.com/senntyou/json-refactor)
+### `refactor/responseRefactor`: 使用 [json-refactor](https://github.com/senntyou/json-refactor) 重构返回对象的规则
 
 - `type`: `map`
 - `default`: `{}`
@@ -88,9 +90,9 @@ If `GET` method, request params will not stringify at any time.
 refactor: rules
 ```
 
-- `rules`: see [json-refactor](https://github.com/senntyou/json-refactor)
+- `rules`: 查看 [json-refactor](https://github.com/senntyou/json-refactor)
 
-### `pre/preHandle`: more handling to request params
+### `pre/preHandle`: 对请求参数更多的前置处理
 
 - `type`: `function`
 
@@ -98,7 +100,7 @@ refactor: rules
 (params, name) => {... modify params, or return a new params ...}
 ```
 
-### `post/postHandle`: more handling to response data
+### `post/postHandle`: 对响应数据更多的后置处理
 
 - `type`: `function`
 
@@ -106,7 +108,7 @@ refactor: rules
 (result, params, name) => {... modify result, or return a new result }
 ```
 
-### `implement`: custom implementing instead of `fetch`
+### `implement`: 自定义 `fetch` 实现
 
 - `type`: `function`
 
@@ -114,17 +116,17 @@ refactor: rules
 (cb, params) => { ... cb(result), or return a Promise }
 ```
 
-Sometimes, you have to not use `fetch`, but other ways, like html templates.
+有时不一定会通过 `fetch` 获取数据, 而是其他方式, 如 html 模板引擎.
 
 ## api
 
-### `seeFetch.config`: configure application
+### `seeFetch.config`: 配置应用
 
 ```
-// one
+// 一个
 seeFetch.config(name, options);
 
-// multiple
+// 多个
 seeFetch.config({
   name1: options1,
   name2: options2,
@@ -132,15 +134,15 @@ seeFetch.config({
 });
 ```
 
-### `seeFetch.setEnv`: set current environment(index to get config options)
+### `seeFetch.setEnv`: 设置当前的环境(用于获取配置项)
 
 ```
 seeFetch.setEnv(0/1/2/3);
 ```
 
-If you need multiple environments supports, you can configure all config options by array, and then set a env.
+如果需要配置多个环境支持，可以把所有的配置项设为数组，并设置一个环境值.
 
-If you don't set an environment, 0 will be the default.
+如果未设置环境值，则默认是 0.
 
 ```
 seeFetch.config(name, {
@@ -159,28 +161,28 @@ seeFetch.setEnv(0); // method1, stringify1, url1, ...
 seeFetch.setEnv(1); // method2, stringify2, url2, ...
 ```
 
-### `seeFetch.getEnv`: get current environment
+### `seeFetch.getEnv`: 获取当前的环境
 
 ```
 const env = seeFetch.getEnv(); // 0/1/2/3
 ```
 
-### `seeFetch`: make a request
+### `seeFetch`: 发起一个请求
 
 ```
 seeFetch(name, params).then(result => { ... });
 ```
 
-- `name`: defined request name
-  - `note`: `common` is a special request name, and it will apply to all requests
-- `params`: request params
+- `name`: 定义的请求名
+  - `note`: `common` 是一个特殊的请求名, 会应用到所有的请求上
+- `params`: 请求参数
   - `type`: `map`
   - `example`: `{a: 1, b: '2'}`
-- `result`: handled response data. But if response's status code is `3XX, 4XX, 5XX`, `result` will be like: `{error: true, response: Response}`
-  - `error`: mark response having an error, and you can customize it by `seeFetch.set({errorField: 'yourErrorField'})`
-  - `response`: original [Response Object](https://developer.mozilla.org/zh-CN/docs/Web/API/Response)
+- `result`: 响应数据. 但如果响应码是 `3XX, 4XX, 5XX`, 则 `result` 会如: `{error: true, response: Response}`
+  - `error`: 标记响应出现错误, 当然你也可以通过 `seeFetch.set({errorField: 'yourErrorField'})` 自定义这个字段
+  - `response`: 原始 [Response Object](https://developer.mozilla.org/zh-CN/docs/Web/API/Response)
 
-### `seeFetch.set`: set custom config
+### `seeFetch.set`: 设置自定义配置
 
 ```
 seeFetch.set({
@@ -191,25 +193,25 @@ seeFetch.set({
 });
 ```
 
-- `errorField`: `type: string` `default: error` configure your own error field
-- `debug`: `type: bool` `default: true` whether in debug mode
-- `disableCache`: `type: bool` `default: true` disable request cache for `GET, HEAD` methods
-- `disableCacheField`: `type: string` `default: _` field name for appending timestamp to original url when `disableCache` is `true`
+- `errorField`: `type: string` `default: error` 配置你的自定义错误字段
+- `debug`: `type: bool` `default: true` 是否开启调试模式
+- `disableCache`: `type: bool` `default: true` 禁用 `GET, HEAD` 方法请求的缓存功能
+- `disableCacheField`: `type: string` `default: _` 当`disableCache` 为 `true` 时, 添加时间戳到原 url 上的字段名
 
-## handlers sequences while processing
+## 各个操作的先后顺序
 
-1. `method`: check which http method to use, default is `GET`
-2. `stringify`: check whether to stringify request params
-3. `settings`: check extra fetch settings
-4. `url`: get request url
-5. `req`: get real request params
-6. `pre`: more handling before send a request
-   1. `common`: common handling, if have
-   2. `name`: named handling
-7. `implement`: if have, `see-fetch` will not send a `fetch`
-8. `refactor`: refactoring response data
-   1. `common`: common handling, if have
-   2. `name`: named handling
-9. `post`: more handling after refactoring response data
-   1. `common`: common handling, if have
-   2. `name`: named handling
+1. `method`: 检查使用哪个 http 方法, 默认是 `GET`
+2. `stringify`: 检查是否序列化请求参数
+3. `settings`: 检查额外的 fetch 配置
+4. `url`: 获取请求 url
+5. `req`: 获取最终的请求参数对象
+6. `pre`: 发起请求之前对请求参数的前置操作
+   1. `common`: 通用的操作, 如果有
+   2. `name`: 当前配置的操作
+7. `implement`: 如果有, `see-fetch` 将不会发起 `fetch` 请求
+8. `refactor`: 重构响应数据
+   1. `common`: 通用的操作, 如果有
+   2. `name`: 当前配置的操作
+9. `post`: 重构响应对象之后对响应对象的后置操作
+   1. `common`: 通用的操作, 如果有
+   2. `name`: 当前配置的操作
