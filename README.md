@@ -178,8 +178,8 @@ seeFetch(name, params).then(result => { ... });
 - `params`: 请求参数
   - `type`: `map`
   - `example`: `{a: 1, b: '2'}`
-- `result`: 成功的回调. 但如果响应码是 `3XX, 4XX, 5XX`, 则 `result` 会如: `{error: true, response: Response}`
-  - `error`: 标记响应出现错误, 当然你可以通过 `seeFetch.set({errorField: 'yourErrorField'})` 自定义这个字段
+- `result`: 响应数据. 但如果响应码是 `3XX, 4XX, 5XX`, 则 `result` 会如: `{error: true, response: Response}`
+  - `error`: 标记响应出现错误, 当然你也可以通过 `seeFetch.set({errorField: 'yourErrorField'})` 自定义这个字段
   - `response`: 原始 [Response Object](https://developer.mozilla.org/zh-CN/docs/Web/API/Response)
 
 ### `seeFetch.set`: 设置自定义配置
