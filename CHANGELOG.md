@@ -1,5 +1,9 @@
 # changelog
 
+## 1.0.2 [2019-08-21]
+
+- Fix bug of `req: {key: key}` causing `params: {key: undefined}`.
+
 ## 1.0.1 [2018-11-02]
 
 - Add `cache, cacheField` configs.

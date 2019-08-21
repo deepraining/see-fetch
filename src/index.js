@@ -100,7 +100,7 @@ const postHandle = (name, params) => res => {
   return response;
 };
 
-const send = (name, params) => {
+const send = (name, params = {}) => {
   if (!name) return;
 
   // current config
@@ -140,7 +140,7 @@ const send = (name, params) => {
 
   Object.keys(realParams).forEach(key => {
     const newKey = req[key];
-    if (newKey && typeof newKey === 'string') {
+    if (newKey && typeof newKey === 'string' && newKey !== key) {
       // make a new key
       realParams[newKey] = realParams[key];
       // delete old key

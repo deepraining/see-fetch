@@ -100,7 +100,7 @@ describe('all fetch tests', () => {
       expect(request.url).toBe('/url12');
       expect(Object.keys(request.body).length).toBe(5);
       expect(request.body.key21).toBe('1');
-      expect(request.body.key22).toBe('2');
+      expect(request.body.key2).toBe('2');
       expect(request.body.key3).toBe('3');
       expect(request.body.common).toBe('1');
       expect(request.body.fetch1).toBe('1');
@@ -258,7 +258,7 @@ describe('all fetch tests', () => {
 
       expect(Object.keys(params).length).toBe(5);
       expect(params.key21).toBe(1);
-      expect(params.key22).toBe(2);
+      expect(params.key2).toBe(2);
       expect(params.key3).toBe('3');
       expect(params.common).toBe(1);
       expect(params.fetch1).toBe(1);
