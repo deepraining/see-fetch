@@ -1,5 +1,9 @@
 # changelog
 
+## 1.0.3 [2019-11-25]
+
+- Fix bug of error response can't be accessed in `postHandle`.
+
 ## 1.0.2 [2019-08-21]
 
 - Fix bug of `req: {key: key}` causing `params: {key: undefined}`.

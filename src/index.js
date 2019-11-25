@@ -54,9 +54,6 @@ const afterFetch = res => {
 };
 
 const postHandle = (name, params) => res => {
-  // has error
-  if (res[sets.errorField]) return res;
-
   // current config
   const nConfig = configs[name];
   // common config
@@ -174,9 +171,12 @@ const send = (name, params = {}) => {
         resolve(postHandle(name, realParams)(result));
       };
 
-      const promise = implement(result => {
-        callback(result);
-      }, !stringify ? realParams : JSON.stringify(realParams));
+      const promise = implement(
+        result => {
+          callback(result);
+        },
+        !stringify ? realParams : JSON.stringify(realParams)
+      );
 
       // return a Promise
       if (promise && promise instanceof Promise)

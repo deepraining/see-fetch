@@ -1,6 +1,6 @@
 {
   "name": "see-fetch",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "lib/cjs.js",
   "module": "lib/m.js",
   "umd:main": "lib/umd.js",
